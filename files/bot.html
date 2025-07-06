@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Remem AI Chat</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="reminder">
+      <div class="reminder__header">
+        <h1 class="reminder__title">
+          Moti<span class="reminder__title-accent">AI</span>
+        </h1>
+      </div>
+
+      <nav class="reminder__nav">
+        <ul class="reminder__nav-list">
+          <li class="reminder__nav-item">
+            <a class="reminder__nav-link" href="#" id="navSet">Set Reminder</a>
+          </li>
+          <li class="reminder__nav-item"></li>
+          <li>
+            <a class="reminder__nav-link" href="#" id="navBot">Chatbot</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="chat-container">
+        <div id="chatLog" class="chat-log"></div>
+        <div class="chat-input">
+          <input type="text" id="userInput" placeholder="Tell me anything!" />
+          <button id="sendBtn">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="bot.js"></script>
+  </body>
+</html>
