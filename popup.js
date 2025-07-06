@@ -35,12 +35,10 @@ if (typeof chrome === "undefined" || !chrome.storage || !chrome.storage.local) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Play audio on popup open
   const audio = document.getElementById("popupAudio");
   const pauseMusicBtn = document.getElementById("pauseMusicBtn");
   if (audio) {
     audio.play().catch((e) => {
-      // Autoplay may be blocked by browser
       console.log("Autoplay blocked:", e);
     });
     if (pauseMusicBtn) {
@@ -70,7 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let pausedTimeLeft = null;
   let currentTask = "";
 
-  // Start timer when user clicks the button
   startBtn.addEventListener("click", () => {
     console.log("Start button clicked");
 
@@ -78,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
       'input[name="duration"]:checked'
     );
     const manualInput = document.getElementById("timeInput").value;
-    const reminderInput = document.getElementById("reminderInput").value.trim();
 
     let duration = null;
     if (selectedRadio) {
@@ -93,8 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Save the current task
-    currentTask = reminderInput;
+    currentTask = document.getElementById("reminderInput").value;
     reminderTaskDisplay.textContent = currentTask ? `Task: ${currentTask}` : "";
 
     const startTime = Date.now();
@@ -108,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
         reminderTask: currentTask,
       },
       () => {
-        if (timer) clearInterval(timer); // Clear any previous timer
+        if (timer) clearInterval(timer);
         paused = false;
         pausedTimeLeft = null;
         pauseBtn.textContent = "Pause Timer";
@@ -118,7 +113,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   });
 
-  // Restore countdown on load if active
   chrome.storage.local.get(
     [
       "reminderStart",
@@ -164,7 +158,6 @@ document.addEventListener("DOMContentLoaded", () => {
           showMainTimerControls();
         } else {
           countdown.textContent = "Time is up!";
-          reminderTaskDisplay.textContent = "";
         }
       }
     }

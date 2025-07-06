@@ -3,6 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const userInput = document.getElementById("userInput");
   const sendBtn = document.getElementById("sendBtn");
 
+  // Test server connection on load
+  testServerConnection();
+
   // Initialize chat with welcome message
   addMessage(
     "MotiAI",
@@ -19,8 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Process message and generate response
       setTimeout(() => {
-        const response = generateResponse(message);
-        addMessage("MotiAI", response, "bot");
+        generateResponse(message).then(response => {
+          addMessage("MotiAI", response, "bot");
+        });
       }, 500);
     }
   }
@@ -43,47 +47,44 @@ document.addEventListener("DOMContentLoaded", () => {
     chatLog.scrollTop = chatLog.scrollHeight;
   }
 
+  // Test server connection
+  async function testServerConnection() {
+    try {
+      const response = await fetch('http://localhost:5000/test');
+      if (response.ok) {
+        console.log('AI server is running!');
+        return true;
+      }
+    } catch (error) {
+      console.error('AI server is not running:', error);
+      return false;
+    }
+  }
+
   // Generate AI response
-  function generateResponse(userMessage) {
-    const message = userMessage.toLowerCase();
-    const userStats = getUserStats();
+  async function generateResponse(userMessage) {
+    try {
+      const response = await fetch('http://localhost:5000/motivate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          task: userMessage
+        })
+      });
 
-    // Check for specific keywords and provide personalized responses
-    if (message.includes("motivation") || message.includes("motivated")) {
-      return getMotivationalResponse(userStats);
+      if (response.ok) {
+        const data = await response.json();
+        return data.message;
+      } else {
+        console.error('Server error:', response.status);
+        return "I'm having trouble connecting right now. Please try again later.";
+      }
+    } catch (error) {
+      console.error('Error calling AI server:', error);
+      return "I'm having trouble connecting right now. Please try again later.";
     }
-
-    if (message.includes("goal") || message.includes("goals")) {
-      return getGoalResponse(userStats);
-    }
-
-    if (message.includes("productivity") || message.includes("productive")) {
-      return getProductivityTips(userStats);
-    }
-
-    if (message.includes("mood") || message.includes("feeling")) {
-      return getMoodResponse(userStats);
-    }
-
-    if (message.includes("stats") || message.includes("progress")) {
-      return getStatsResponse(userStats);
-    }
-
-    if (message.includes("help") || message.includes("what can you do")) {
-      return getHelpResponse();
-    }
-
-    // Default responses
-    const defaultResponses = [
-      "That's interesting! How can I help you stay productive today?",
-      "I'm here to support your productivity journey. What would you like to focus on?",
-      "Great question! Let me know if you need motivation, productivity tips, or help with your goals.",
-      "I'm listening! How can I assist you with your tasks and goals today?",
-    ];
-
-    return defaultResponses[
-      Math.floor(Math.random() * defaultResponses.length)
-    ];
   }
 
   // Get user statistics
