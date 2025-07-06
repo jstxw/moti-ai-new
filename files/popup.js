@@ -74,6 +74,25 @@ document.addEventListener("DOMContentLoaded", () => {
   startBtn.addEventListener("click", () => {
     console.log("Start button clicked");
 
+    const selectedRadio = document.querySelector(
+      'input[name="duration"]:checked'
+    );
+    const manualInput = document.getElementById("timeInput").value;
+    const reminderInput = document.getElementById("reminderInput").value.trim();
+
+    let duration = null;
+    if (selectedRadio) {
+      duration = parseInt(selectedRadio.value);
+    } else if (manualInput && !isNaN(parseInt(manualInput))) {
+      duration = parseInt(manualInput);
+    }
+
+    if (!duration || isNaN(duration) || duration <= 0) {
+      countdown.textContent = "Please select or enter a valid time in minutes.";
+      alert("Please enter a valid time in minutes.");
+      return;
+    }
+
     // Save the current task
     currentTask = reminderInput;
     reminderTaskDisplay.textContent = currentTask ? `Task: ${currentTask}` : "";
@@ -446,10 +465,9 @@ if (changeColorBtn && chrome.tabs && chrome.scripting) {
 // Task dropdown functionality
 const input = document.querySelector(".reminder__input");
 const button = document.querySelector(".reminder__button");
-let tasks = []; // Store all tasks
+let tasks = [];
 let selectedTask = null;
 
-// Create dropdown container
 const dropdownContainer = document.createElement("div");
 dropdownContainer.className = "task-dropdown-container";
 dropdownContainer.style.display = "none";
@@ -457,11 +475,10 @@ const inputGroup = document.querySelector(".reminder__input-group");
 inputGroup.parentNode.insertBefore(dropdownContainer, inputGroup.nextSibling);
 
 button.addEventListener("click", (e) => {
-  e.stopPropagation(); // Prevent document click from closing dropdown immediately
+  e.stopPropagation();
   const value = input.value.trim();
 
   if (value) {
-    // Add task to the list if it's not already there
     if (!tasks.includes(value)) {
       tasks.push(value);
     }
@@ -470,13 +487,9 @@ button.addEventListener("click", (e) => {
     updateDropdown();
     showDropdown();
 
-    // Clear input
     input.value = "";
   }
 });
-
-// Remove document click event that hides the dropdown
-// Make the dropdown always visible if there are tasks
 
 function updateDropdown() {
   dropdownContainer.innerHTML = "";
@@ -488,13 +501,11 @@ function updateDropdown() {
 
   dropdownContainer.style.display = "block";
 
-  // Add header
   const header = document.createElement("div");
   header.className = "dropdown-header";
   header.textContent = "Your Tasks:";
   dropdownContainer.appendChild(header);
 
-  // Add each task
   tasks.forEach((task, index) => {
     const taskItem = document.createElement("div");
     taskItem.className = "dropdown-item";
@@ -528,7 +539,6 @@ function updateDropdown() {
     dropdownContainer.appendChild(taskItem);
   });
 
-  // Show selected task info
   if (selectedTask) {
     document.getElementById(
       "displayReminder"
@@ -550,7 +560,6 @@ function removeTask(index) {
   const removedTask = tasks[index];
   tasks.splice(index, 1);
 
-  // If we removed the selected task, clear selection
   if (selectedTask === removedTask) {
     selectedTask = tasks.length > 0 ? tasks[0] : null;
     if (selectedTask) {
@@ -569,27 +578,9 @@ function removeTask(index) {
   }
 }
 
-// Show dropdown when clicking on input (if there are tasks)
 input.addEventListener("click", (e) => {
   e.stopPropagation();
   if (tasks.length > 0) {
     showDropdown();
   }
-});
-
-// --- Emoji Selector Logic ---
-let currentEmoji = "😊"; // Default emoji
-document.addEventListener("DOMContentLoaded", () => {
-  const emojiBtns = document.querySelectorAll(".emoji-btn");
-  if (emojiBtns.length > 0) {
-    emojiBtns[0].classList.add("selected");
-    currentEmoji = emojiBtns[0].textContent;
-  }
-  emojiBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      emojiBtns.forEach((b) => b.classList.remove("selected"));
-      btn.classList.add("selected");
-      currentEmoji = btn.textContent;
-    });
-  });
 });

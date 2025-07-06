@@ -471,17 +471,18 @@ body {
 #pauseMusicBtn {
   position: absolute;
   right: 20px;
-  top: 38px;
-  z-index: 10;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
   border: none;
-  border-radius: 50%;
+  border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 500;
   padding: 20px;
-  width: 100px;
-  height: 50px;
+  min-width: 100px;
+  min-height: 40px;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
   transition: all 0.2s ease;
   cursor: pointer;
