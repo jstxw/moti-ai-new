@@ -1,45 +1,45 @@
 Moti-AI is a friendly and lightweight Chrome extension designed to help you stay on track by delivering timely, motivational reminders. Whether you're battling procrastination, building new habits, or just need a gentle nudge, Moti-AI keeps you focused with custom-timed prompts and encouragement.
-Features
-Custom Timer: Set a timer for your reminders with preset or custom durations.
-Pause/Resume: Pause and resume your main timer at any time.
-Multiple Timers: Start additional independent timers for different tasks.
-Task List: Add, select, and delete tasks. Each timer can be associated with a task.
-Task Display: The currently selected or input task is displayed above the timer.
-Emoji Selector: Choose an emoji to associate with each task for a fun, visual touch.
-Motivational Audio: Background music plays automatically when the popup opens, with a button to pause or resume playback.
-Persistent State: Timer and task state are saved using Chrome's storage API, so your reminders persist even if you close the popup.
-AI Chatbot: Integrated with OpenAI's GPT-3.5-turbo for motivational chat and productivity advice (API key required).
-Modern UI: Clean, consistent, and responsive design with intuitive controls.
-Installation
-Clone or Download the Repository:
-Open Chrome and Navigate to Extensions:
-Go to chrome://extensions/
-Enable "Developer mode" (top right)
-Click "Load unpacked" and select the extension boilerplate/files directory.
-(Optional) Set Up OpenAI API Key:
-Open bot.js and replace the apiKey placeholder with your OpenAI API key for chatbot functionality.
-Usage
-Open the Extension: Click the Moti-AI icon in your Chrome toolbar.
-Set a Reminder:
-Enter a task in the input box.
-Select a duration or enter a custom time.
-Click "Start Timer For Reminder" to begin.
-Manage Tasks:
-Use the green button to add tasks to your list.
-Click on a task to select it, or use the "×" button to delete.
-Multiple Timers: Click "Start Another Reminder" to create additional timers.
-Pause/Resume: Use the "Pause Timer" button to pause or resume the main timer.
-Motivational Music: Music plays automatically; use the "Pause Music" button to control playback.
-Chatbot: Switch to the chatbot tab for motivational advice or productivity tips.
-File Structure
-popup.html, popup.js, style.css: Main extension popup UI and logic.
-bot.html, bot.js: AI chatbot interface and logic.
-manifest.json: Chrome extension manifest.
-ai_server.py: (If used) Backend server for advanced AI features.
-dropdown.js, view_reminder.html: Additional UI components.
-Development Notes
-For local testing outside Chrome, a mock for chrome.storage.local is included in popup.js.
-The extension uses the Chrome Scripting API for certain features (e.g., grayscale mode).
-Ensure all file paths in manifest.json are correct and permissions are set as needed.
-License
-MIT License
+
+💡 How Flask Powered Our Backend API
+In our project Moti-AI, Flask served as the lightweight backend API framework that allowed us to dynamically generate motivational content based on user input. Specifically, we used Flask to:
+
+✅ 1. Build a Custom API to Deliver Motivation
+We created a /motivate endpoint that accepts a user-defined task (e.g., "finish my homework"), and returns a short, encouraging message tailored to that task. This motivational message is powered by OpenAI's GPT model, accessed securely through our Flask server.
+
+🧠 Why Flask? It’s fast to set up, easy to integrate with modern frontend tools (like Chrome Extensions), and ideal for small, focused APIs like ours.
+
+✅ 2. Handle Requests from a Chrome Extension
+Our frontend (a Chrome Extension) sends POST requests to the Flask API when users set a reminder. The Flask server responds with a motivational message like:
+
+“You're doing great! Just focus on one small win.”
+
+This message is then displayed in the extension, giving users a positive push when they need it most.
+
+✅ 3. Allow for Future Expansion
+We included a /chat endpoint as a placeholder to demonstrate how Flask can handle multi-route conversational features in the future (e.g., journaling, check-ins, chatbot interactions).
+
+🧠 How We Used OpenAI's GPT-4.1 Model in Moti-AI
+One of the key features of Moti-AI is its ability to deliver empathetic, task-specific motivational messages — and this is powered by the GPT-4.1 model from OpenAI.
+
+🔹 Why GPT-4.1?
+The GPT-4.1 model represents OpenAI's latest evolution in language modeling, offering:
+
+More accurate and context-aware responses
+
+Faster inference times
+
+Improved emotional tone and style matching
+
+Better alignment with user intent, even from short prompts
+
+For a project like Moti-AI — which aims to give friendly, helpful, and emotionally intelligent nudges — GPT-4.1 gave us exactly the right balance of conciseness, human warmth, and contextual sensitivity.
+
+Note: Flask was run on a .venv to avoid repetition when importing python libraries.
+
+1. .\.venv\Scripts\Activate.ps1
+2. pip install flask openai@latest python-dotenv flask-cors
+3. python3 ai_server.py
+
+Challenges: First time using flask, bot always returning undefined. Mentors helped me troubleshoot the problem, and taught me how to debug. for example on of the problems was OPENAI updates its implementation, needing me to go into quickstart and changing the old code. Another challenge was deciding the functionality of the app, so that it is both useful but also focused and realistic .
+
+Learning: Learned how API endpoints work, talk about how I made two for future expansion, learned how to utilize flask as python backend, learned how to make a google chrome extension, learned how to make a functioning timer (even though it is not working here.) learned how to design bubbly and enticing UI.
