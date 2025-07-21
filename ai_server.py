@@ -5,16 +5,15 @@ import os
 import openai
 from openai import OpenAI
 
-# Load environment variables from .env file
+
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 client = OpenAI()
 
 
-# Set up Flask app
 app = Flask(__name__)
-CORS(app)  # Allow requests from different origins like Chrome Extensions
+CORS(app) 
 
 @app.route('/motivate', methods=['POST'])
 def motivate():
