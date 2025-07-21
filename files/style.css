@@ -74,6 +74,8 @@ body {
 .reminder__content {
   padding: 32px 24px;
   min-height: 380px;
+  max-height: 600px;
+  overflow-y: auto;
 }
 
 .reminder__label {
@@ -312,7 +314,33 @@ body {
   border: 1px solid #e2e8f0;
 }
 
-/* Display text styling */
+/* Timers Container */
+#timersContainer {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+#timersContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+#timersContainer::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+#timersContainer::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+#timersContainer::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
 #displayReminder,
 #displayReminder2 {
   margin-top: 8px;

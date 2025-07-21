@@ -1,5 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   const startBtn = document.querySelector(".reminder__start-button");
+  const startAnotherBtn = document.querySelector(
+    ".reminder__start-button--secondary"
+  );
   const countdown = document.getElementById("countdown");
 
   startBtn.addEventListener("click", () => {
