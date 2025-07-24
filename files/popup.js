@@ -32,6 +32,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const countdown = document.getElementById("countdownDisplay");
   const pauseBtn = document.getElementById("pauseTimerBtn");
   const reminderTaskDisplay = document.getElementById("reminderTaskDisplay");
+  const anotherTimerBtn = document.querySelector('.reminder__start-button--secondary');
+  const timersContainer = document.getElementById('timersContainer');
+  const removeMainTimerBtn = document.getElementById("removeMainTimerBtn");
 
   let timer = null; // Track the timer interval globally
   let paused = false;
@@ -81,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
         pausedTimeLeft = null;
         pauseBtn.textContent = "Pause Timer";
         startCountdown(startTime, duration);
+        showMainTimerControls();
       }
     );
   });
@@ -110,6 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
         pauseBtn.textContent = "Pause Timer";
         startCountdown(reminderStart, reminderDuration);
         reminderTaskDisplay.textContent = reminderTask ? `Task: ${reminderTask}` : "";
+        showMainTimerControls();
       } else {
         countdown.textContent = "Time is up!";
         reminderTaskDisplay.textContent = "";
@@ -195,12 +200,143 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   });
+
+  // Remove main timer functionality
+  removeMainTimerBtn.addEventListener("click", () => {
+    if (timer) clearInterval(timer);
+    timer = null;
+    countdown.textContent = "Time remaining: 00:00";
+    pauseBtn.style.display = "none";
+    removeMainTimerBtn.style.display = "none";
+    reminderTaskDisplay.textContent = "";
+  });
+
+  // Show pause and remove buttons when timer is started
+  function showMainTimerControls() {
+    pauseBtn.style.display = "";
+    removeMainTimerBtn.style.display = "";
+  }
+
+  // Start Another Reminder button logic
+  if (!anotherTimerBtn) {
+    console.error('Start Another Reminder button not found!');
+  } else if (!timersContainer) {
+    console.error('Timers container not found!');
+  } else {
+    anotherTimerBtn.addEventListener('click', () => {
+      const selectedRadio = document.querySelector('input[name="duration"]:checked');
+      const manualInput = document.getElementById('timeInput').value;
+      const reminderInput = document.getElementById('reminderInput').value.trim();
+      let duration = null;
+      if (selectedRadio) {
+        duration = parseInt(selectedRadio.value);
+      } else if (manualInput && !isNaN(parseInt(manualInput))) {
+        duration = parseInt(manualInput);
+      }
+      if (!duration || isNaN(duration) || duration <= 0) {
+        alert('Please enter a valid time in minutes.');
+        return;
+      }
+      // Use selected emoji if available
+      let emoji = currentEmoji || '😊';
+      // Create timer element
+      const timerDiv = document.createElement('div');
+      timerDiv.className = 'additional-timer';
+      timerDiv.style.marginTop = '16px';
+      timerDiv.style.padding = '12px 16px';
+      timerDiv.style.background = '#f8fafc';
+      timerDiv.style.border = '1.5px solid #e2e8f0';
+      timerDiv.style.borderRadius = '8px';
+      timerDiv.style.display = 'flex';
+      timerDiv.style.alignItems = 'center';
+      timerDiv.style.gap = '16px';
+
+      // Countdown (styled like main timer)
+      const countdownSpan = document.createElement('span');
+      countdownSpan.style.fontFamily = 'monospace';
+      countdownSpan.style.fontSize = '1.1rem';
+      countdownSpan.style.fontWeight = 'bold';
+      countdownSpan.style.color = '#374151';
+      countdownSpan.style.background = '#f8fafc';
+      countdownSpan.style.padding = '8px 16px';
+      countdownSpan.style.borderRadius = '8px';
+      countdownSpan.style.border = '1px solid #e2e8f0';
+      timerDiv.appendChild(countdownSpan);
+
+      // Pause/Resume button
+      const pauseBtn = document.createElement('button');
+      pauseBtn.textContent = 'Pause Timer';
+      pauseBtn.className = 'reminder__button';
+      pauseBtn.style.marginLeft = '12px';
+      timerDiv.appendChild(pauseBtn);
+
+      // Remove button
+      const removeBtn = document.createElement('button');
+      removeBtn.textContent = '×';
+      removeBtn.className = 'delete-task-btn';
+      removeBtn.style.marginLeft = '8px';
+      timerDiv.appendChild(removeBtn);
+
+      timersContainer.appendChild(timerDiv);
+      console.log('Created new additional timer:', duration);
+
+      // Timer logic
+      let totalSeconds = duration * 60;
+      let timeLeft = totalSeconds;
+      let paused = false;
+      let interval = null;
+
+      function updateCountdownDisplay() {
+        if (timeLeft <= 0) {
+          countdownSpan.textContent = 'Time is up!';
+          return;
+        }
+        const mins = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+        const secs = (timeLeft % 60).toString().padStart(2, '0');
+        countdownSpan.textContent = `Time remaining: ${mins}:${secs}`;
+      }
+
+      function startTimer() {
+        updateCountdownDisplay();
+        interval = setInterval(() => {
+          if (!paused) {
+            timeLeft--;
+            updateCountdownDisplay();
+            if (timeLeft <= 0) {
+              clearInterval(interval);
+              countdownSpan.textContent = 'Time is up!';
+              alert('Time to do your task!');
+            }
+          }
+        }, 1000);
+      }
+
+      pauseBtn.addEventListener('click', () => {
+        if (!paused) {
+          paused = true;
+          pauseBtn.textContent = 'Resume';
+        } else {
+          paused = false;
+          pauseBtn.textContent = 'Pause';
+        }
+      });
+
+      removeBtn.addEventListener('click', () => {
+        clearInterval(interval);
+        timerDiv.remove();
+      });
+
+      startTimer();
+    });
+  }
 });
 
 // --- Page Toggle ---
 const setReminderLink = document.querySelector('.reminder__nav-link[href="#"]');
 const viewReminderLink = document.querySelectorAll(".reminder__nav-link")[1];
 const botLink = document.getElementById("navBot");
+const soundLink = document.getElementById("navSound");
+const soundSection = document.getElementById("soundSection");
 
 const content = document.querySelector(".reminder__content");
 const setSection = content.querySelectorAll(
@@ -212,18 +348,40 @@ setReminderLink.addEventListener("click", (e) => {
   e.preventDefault();
   setSection.forEach((el) => (el.style.display = ""));
   if (viewSection) viewSection.style.display = "none";
+  if (soundSection) soundSection.style.display = "none";
+  // Show timers
+  document.querySelectorAll('.additional-timer').forEach(el => el.style.display = "flex");
+  const mainTimerBox = document.querySelector('#mainCountdownBox')?.parentElement;
+  if (mainTimerBox) mainTimerBox.style.display = "flex";
 });
 
 viewReminderLink.addEventListener("click", (e) => {
   e.preventDefault();
   setSection.forEach((el) => (el.style.display = "none"));
   if (viewSection) viewSection.style.display = "block";
+  if (soundSection) soundSection.style.display = "none";
+  // Show timers
+  document.querySelectorAll('.additional-timer').forEach(el => el.style.display = "flex");
+  const mainTimerBox = document.querySelector('#mainCountdownBox')?.parentElement;
+  if (mainTimerBox) mainTimerBox.style.display = "flex";
 });
 
 // Navigate to bot.html when Bot tab is clicked
 botLink.addEventListener("click", (e) => {
   e.preventDefault();
   window.location.href = "bot.html";
+});
+
+// Show Sound section when Sound tab is clicked
+soundLink.addEventListener("click", (e) => {
+  e.preventDefault();
+  setSection.forEach((el) => (el.style.display = "none"));
+  if (viewSection) viewSection.style.display = "none";
+  if (soundSection) soundSection.style.display = "block";
+  // Hide timers
+  document.querySelectorAll('.additional-timer').forEach(el => el.style.display = "none");
+  const mainTimerBox = document.querySelector('#mainCountdownBox')?.parentElement;
+  if (mainTimerBox) mainTimerBox.style.display = "none";
 });
 
 // Task dropdown functionality
@@ -236,7 +394,8 @@ let selectedTask = null;
 const dropdownContainer = document.createElement("div");
 dropdownContainer.className = "task-dropdown-container";
 dropdownContainer.style.display = "none";
-input.parentNode.insertBefore(dropdownContainer, input.nextSibling);
+const inputGroup = document.querySelector('.reminder__input-group');
+inputGroup.parentNode.insertBefore(dropdownContainer, inputGroup.nextSibling);
 
 button.addEventListener("click", (e) => {
   e.stopPropagation(); // Prevent document click from closing dropdown immediately
@@ -365,12 +524,19 @@ input.addEventListener("click", (e) => {
   }
 });
 
-// Motivation level functionality (keeping original)
-const input2 = document.querySelector(".reminder__input2");
-const button2 = document.querySelector(".reminder__button2");
-button2.addEventListener("click", () => {
-  const value2 = input2.value.trim();
-  document.getElementById(
-    "displayReminder2"
-  ).textContent = `Motivation level: "${value2}"`;
+// --- Emoji Selector Logic ---
+let currentEmoji = '😊'; // Default emoji
+document.addEventListener('DOMContentLoaded', () => {
+  const emojiBtns = document.querySelectorAll('.emoji-btn');
+  if (emojiBtns.length > 0) {
+    emojiBtns[0].classList.add('selected');
+    currentEmoji = emojiBtns[0].textContent;
+  }
+  emojiBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      emojiBtns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      currentEmoji = btn.textContent;
+    });
+  });
 });

@@ -4,20 +4,34 @@ document.addEventListener("DOMContentLoaded", () => {
   const sendBtn = document.getElementById("sendBtn");
 
   // Initialize chat with welcome message
-  addMessage("MotiAI", "Hello! I'm your personal productivity assistant. How can I help you today? I can give you motivation, productivity tips, or help you track your goals!", "bot");
+  addMessage(
+    "MotiAI",
+    "Hello! I'm your personal productivity assistant. How can I help you today? I can give you motivation, productivity tips, or help you track your goals!",
+    "bot"
+  );
 
   // Send message function
-  function sendMessage() {
+  async function sendMessage() {
     const message = userInput.value.trim();
     if (message) {
       addMessage("You", message, "user");
       userInput.value = "";
-      
-      // Process message and generate response
-      setTimeout(() => {
-        const response = generateResponse(message);
+
+      // Show loading message
+      const loadingDiv = document.createElement("div");
+      loadingDiv.className = "message bot-message";
+      loadingDiv.innerHTML = `<div class="message-header"><strong>MotiAI</strong> <span class="message-time">...</span></div><div class="message-content">Thinking...</div>`;
+      chatLog.appendChild(loadingDiv);
+      chatLog.scrollTop = chatLog.scrollHeight;
+
+      try {
+        const response = await fetchOpenAIResponse(message);
+        loadingDiv.remove();
         addMessage("MotiAI", response, "bot");
-      }, 500);
+      } catch (err) {
+        loadingDiv.remove();
+        addMessage("MotiAI", "Sorry, I couldn't reach the AI service. Please try again later.", "bot");
+      }
     }
   }
 
@@ -25,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function addMessage(sender, message, type) {
     const messageDiv = document.createElement("div");
     messageDiv.className = `message ${type}-message`;
-    
+
     const time = new Date().toLocaleTimeString();
     messageDiv.innerHTML = `
       <div class="message-header">
@@ -34,67 +48,64 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
       <div class="message-content">${message}</div>
     `;
-    
+
     chatLog.appendChild(messageDiv);
     chatLog.scrollTop = chatLog.scrollHeight;
   }
 
-  // Generate AI response
-  function generateResponse(userMessage) {
-    const message = userMessage.toLowerCase();
-    const userStats = getUserStats();
-    
-    // Check for specific keywords and provide personalized responses
-    if (message.includes("motivation") || message.includes("motivated")) {
-      return getMotivationalResponse(userStats);
-    }
-    
-    if (message.includes("goal") || message.includes("goals")) {
-      return getGoalResponse(userStats);
-    }
-    
-    if (message.includes("productivity") || message.includes("productive")) {
-      return getProductivityTips(userStats);
-    }
-    
-    if (message.includes("mood") || message.includes("feeling")) {
-      return getMoodResponse(userStats);
-    }
-    
-    if (message.includes("stats") || message.includes("progress")) {
-      return getStatsResponse(userStats);
-    }
-    
-    if (message.includes("help") || message.includes("what can you do")) {
-      return getHelpResponse();
-    }
-    
-    // Default responses
-    const defaultResponses = [
-      "That's interesting! How can I help you stay productive today?",
-      "I'm here to support your productivity journey. What would you like to focus on?",
-      "Great question! Let me know if you need motivation, productivity tips, or help with your goals.",
-      "I'm listening! How can I assist you with your tasks and goals today?"
-    ];
-    
-    return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+  // Call OpenAI API for chat completion
+  async function fetchOpenAIResponse(userMessage) {
+    const apiKey = "YOUR_OPENAI_API_KEY"; // <-- Replace with your OpenAI API key
+    const endpoint = "https://api.openai.com/v1/chat/completions";
+    const headers = {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apiKey}`,
+    };
+    const body = JSON.stringify({
+      model: "gpt-3.5-turbo",
+      messages: [
+        { role: "system", content: "You are MotiAI, a friendly productivity assistant. Give concise, motivational, and helpful responses." },
+        { role: "user", content: userMessage },
+      ],
+      max_tokens: 200,
+      temperature: 0.7,
+    });
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers,
+      body,
+    });
+    if (!res.ok) throw new Error("OpenAI API error");
+    const data = await res.json();
+    return data.choices[0].message.content.trim();
   }
 
   // Get user statistics
   function getUserStats() {
-    const completedTasks = JSON.parse(localStorage.getItem('completedTasks') || '[]');
-    const motivationLevels = JSON.parse(localStorage.getItem('motivationLevels') || '[]');
-    const goals = JSON.parse(localStorage.getItem('goals') || '[]');
-    const moodHistory = JSON.parse(localStorage.getItem('moodHistory') || '[]');
-    
+    const completedTasks = JSON.parse(
+      localStorage.getItem("completedTasks") || "[]"
+    );
+    const motivationLevels = JSON.parse(
+      localStorage.getItem("motivationLevels") || "[]"
+    );
+    const goals = JSON.parse(localStorage.getItem("goals") || "[]");
+    const moodHistory = JSON.parse(localStorage.getItem("moodHistory") || "[]");
+
     return {
       totalTasks: completedTasks.length,
-      avgMotivation: motivationLevels.length > 0 
-        ? Math.round(motivationLevels.reduce((a, b) => a + b, 0) / motivationLevels.length)
-        : 0,
-      activeGoals: goals.filter(g => !g.completed).length,
-      completedGoals: goals.filter(g => g.completed).length,
-      recentMood: moodHistory.length > 0 ? moodHistory[moodHistory.length - 1].mood : null
+      avgMotivation:
+        motivationLevels.length > 0
+          ? Math.round(
+              motivationLevels.reduce((a, b) => a + b, 0) /
+                motivationLevels.length
+            )
+          : 0,
+      activeGoals: goals.filter((g) => !g.completed).length,
+      completedGoals: goals.filter((g) => g.completed).length,
+      recentMood:
+        moodHistory.length > 0
+          ? moodHistory[moodHistory.length - 1].mood
+          : null,
     };
   }
 
@@ -105,9 +116,9 @@ document.addEventListener("DOMContentLoaded", () => {
       "Your dedication is inspiring! You've completed ${stats.totalTasks} tasks so far. Keep that momentum going!",
       "Motivation comes and goes, but discipline lasts forever. You're building great habits!",
       "Think of how far you've come, not just how far you have to go. You're doing amazing!",
-      "Success is not final, failure is not fatal: it is the courage to continue that counts. Keep pushing forward!"
+      "Success is not final, failure is not fatal: it is the courage to continue that counts. Keep pushing forward!",
     ];
-    
+
     return responses[Math.floor(Math.random() * responses.length)];
   }
 
@@ -130,36 +141,43 @@ document.addEventListener("DOMContentLoaded", () => {
       "Eliminate distractions by putting your phone in another room during focused work time.",
       "Use the 2-minute rule: if something takes less than 2 minutes, do it now instead of later.",
       "Batch similar tasks together to reduce context switching and increase efficiency.",
-      "Take regular breaks to maintain mental clarity and prevent burnout."
+      "Take regular breaks to maintain mental clarity and prevent burnout.",
     ];
-    
-    return `Here's a productivity tip for you: ${tips[Math.floor(Math.random() * tips.length)]}`;
+
+    return `Here's a productivity tip for you: ${
+      tips[Math.floor(Math.random() * tips.length)]
+    }`;
   }
 
   // Mood responses
   function getMoodResponse(stats) {
     if (stats.recentMood) {
       const moodResponses = {
-        'excellent': "That's wonderful! Your positive energy is contagious. Use this momentum to tackle your most challenging tasks!",
-        'good': "Great! A good mood is perfect for productivity. What would you like to accomplish today?",
-        'okay': "It's okay to have okay days. Sometimes the best thing you can do is take small steps forward.",
-        'bad': "I'm sorry you're feeling down. Remember, it's okay to take it easy today. Maybe try a small, achievable task to build momentum?",
-        'terrible': "I'm here for you. On difficult days, be kind to yourself. Maybe focus on self-care today, and we can tackle tasks when you're feeling better."
+        excellent:
+          "That's wonderful! Your positive energy is contagious. Use this momentum to tackle your most challenging tasks!",
+        good: "Great! A good mood is perfect for productivity. What would you like to accomplish today?",
+        okay: "It's okay to have okay days. Sometimes the best thing you can do is take small steps forward.",
+        bad: "I'm sorry you're feeling down. Remember, it's okay to take it easy today. Maybe try a small, achievable task to build momentum?",
+        terrible:
+          "I'm here for you. On difficult days, be kind to yourself. Maybe focus on self-care today, and we can tackle tasks when you're feeling better.",
       };
-      
-      return moodResponses[stats.recentMood] || "How you're feeling matters. What can I do to support you today?";
+
+      return (
+        moodResponses[stats.recentMood] ||
+        "How you're feeling matters. What can I do to support you today?"
+      );
     }
-    
+
     return "How are you feeling today? Tracking your mood can help you understand your productivity patterns!";
   }
 
   // Stats response
   function getStatsResponse(stats) {
     return `Here's your current progress:
-• Tasks completed: ${stats.totalTasks}
-• Average motivation: ${stats.avgMotivation}/10
-• Active goals: ${stats.activeGoals}
-• Completed goals: ${stats.completedGoals}
+Tasks completed: ${stats.totalTasks}
+Average motivation: ${stats.avgMotivation}/10
+Active goals: ${stats.activeGoals}
+Completed goals: ${stats.completedGoals}
 
 You're making great progress! Keep up the excellent work!`;
   }
@@ -168,11 +186,11 @@ You're making great progress! Keep up the excellent work!`;
   function getHelpResponse() {
     return `I'm your personal productivity assistant! Here's what I can help you with:
 
-• **Motivation**: Ask me for encouragement and motivation
-• **Goals**: Get help with goal setting and tracking
-• **Productivity**: Receive personalized productivity tips
-• **Mood**: Talk about how you're feeling and get support
-• **Stats**: Check your progress and achievements
+**Motivation**: Ask me for encouragement and motivation
+**Goals**: Get help with goal setting and tracking
+**Productivity**: Receive personalized productivity tips
+**Mood**: Talk about how you're feeling and get support
+**Stats**: Check your progress and achievements
 
 Just ask me anything related to productivity, motivation, or your goals!`;
   }
@@ -186,7 +204,7 @@ Just ask me anything related to productivity, motivation, or your goals!`;
   });
 
   // Navigation
-  const setReminderLink = document.querySelector('#navSet');
+  const setReminderLink = document.querySelector("#navSet");
   if (setReminderLink) {
     setReminderLink.addEventListener("click", (e) => {
       e.preventDefault();

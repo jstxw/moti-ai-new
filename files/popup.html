@@ -22,6 +22,9 @@
           <li>
             <a class="reminder__nav-link" href="#" id="navBot">Chatbot</a>
           </li>
+          <li>
+            <a class="reminder__nav-link" href="#" id="navSound">Sound</a>
+          </li>
         </ul>
       </nav>
 
@@ -38,7 +41,10 @@
             placeholder="Enter task..."
           />
           <button class="reminder__button">&#10003;</button>
-          <div id="displayReminder" style="color: #000000; margin-left: 10px;"></div>
+          <div
+            id="displayReminder"
+            style="color: #000000; margin-left: 10px"
+          ></div>
         </div>
 
         <label class="reminder__label">Duration between reminders?</label>
@@ -60,20 +66,6 @@
           />
         </fieldset>
 
-        <label class="reminder__label" for="motivationInput"
-          >How motivated are you?</label
-        >
-        <div class="reminder__input-group">
-          <input
-            type="text"
-            id="motivationInput"
-            class="reminder__input2"
-            placeholder="Enter motivation level..."
-          />
-          <button class="reminder__button2">&#10003;</button>
-        </div>
-        <div id="displayReminder2"></div>
-
         <div class="reminder__button-row">
           <button class="reminder__start-button">
             Start Timer For Reminder
@@ -84,20 +76,20 @@
         </div>
 
         <!-- Fixed countdown display -->
-        <div
-          class="countdown"
-          id="countdownDisplay"
-          style="
-            margin-top: 15px;
-            font-size: 18px;
-            color: #333;
-            text-align: center;
-            font-weight: bold;
-            display: inline-block;
-          "
+        <div style="display: flex; align-items: center; gap: 16px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px;">
+          <span id="mainCountdownBox" style="font-family: monospace; font-size: 1.1rem; font-weight: bold; color: #374151; background: #f8fafc; padding: 8px 16px; border-radius: 8px; border: 1px solid #e2e8f0;"> 
+            <span id="countdownDisplay">Time remaining: 00:00</span>
+          </span>
+          <button id="pauseTimerBtn" class="reminder__button" style="margin-left: 12px;">Pause Timer</button>
+          <button id="removeMainTimerBtn" class="delete-task-btn" style="margin-left: 8px;">×</button>
+        </div>
+        <div id="reminderTaskDisplay"
+          style="margin-top: 8px; font-size: 1rem; color: #374151; text-align: center;"
         ></div>
-        <button id="pauseTimerBtn" style="margin-left: 10px; vertical-align: middle; display: inline-block;">Pause Timer</button>
-        <div id="reminderTaskDisplay" style="margin-top: 8px; font-size: 1rem; color: #374151; text-align: center;"></div>
+        <div id="timersContainer"></div>
+      </div>
+      <div id="soundSection" style="display: none; padding: 32px 24px;">
+        <!-- Sound settings will go here -->
       </div>
     </div>
   </body>
