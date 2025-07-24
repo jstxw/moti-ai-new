@@ -1,26 +1,12 @@
 {
   "manifest_version": 3,
   "name": "Reminder Extension",
-<<<<<<< HEAD
-
-=======
->>>>>>> 87f593da069f3f8423aa2d40f63701d86336ff72
   "version": "1.0",
   "description": "yay",
   "action": {
     "default_popup": "popup.html"
     
-<<<<<<< HEAD
   }
   
 }
 
-=======
-  },
-   
-   "web_accessible_resources": [
-    {
-      "resources": ["bot.html"],
-      "matches": ["<all_urls>"]}]
-}
->>>>>>> 87f593da069f3f8423aa2d40f63701d86336ff72
