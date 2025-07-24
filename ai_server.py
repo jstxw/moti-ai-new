@@ -18,9 +18,9 @@ CORS(app)
 @app.route('/motivate', methods=['POST'])
 def motivate():
     data = request.get_json()
-    task = data.get("task", "your task")
+    task = data.get("task", "I am not sure what to focus on")
 
-    prompt = f"Give me a short, encouraging motivational message to help someone focus on: {task}."
+    prompt = task
 
     try:
         response = client.responses.create(

@@ -355,12 +355,21 @@ body {
 
 #displayReminder,
 #displayReminder2 {
-  margin-top: 8px;
-  margin-bottom: 16px;
-  padding: 12px;
-  background: #f0f9ff;
-  border-radius: 6px;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border-radius: 0;
   font-size: 0.9rem;
-  color: #1e40af;
-  border-left: 3px solid #3b82f6;
+  color: inherit;
+  border: none;
+}
+
+#avatar {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background-image: url('avatar-head.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  transition: transform 0.1s ease;
 }

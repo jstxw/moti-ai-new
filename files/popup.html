@@ -18,11 +18,9 @@
           <li class="reminder__nav-item">
             <a class="reminder__nav-link" href="#" id="navSet">Set Reminder</a>
           </li>
-          <li class="reminder__nav-item">
-            
-          </li>
+          <li class="reminder__nav-item"></li>
           <li>
-             <a class="reminder__nav-link" href="#" id="navBot">Chatbot</a>
+            <a class="reminder__nav-link" href="#" id="navBot">Chatbot</a>
           </li>
         </ul>
       </nav>
@@ -32,17 +30,16 @@
         <label class="reminder__label" for="reminderInput"
           >What do you want to be reminded of?</label
         >
-        <div class="reminder__input-group">
+        <div class="reminder__input-group"></div>
           <input
             type="text"
             id="reminderInput"
             class="reminder__input"
             placeholder="Enter task..."
           />
-          <button class="reminder__button">&#10003;</button>
-        </div>
-        <div id="displayReminder" style="color: #000000;"></div>
-
+          <button class="reminder__button">&#10003;</button> </div>
+         
+        <div id="displayReminder" style="color: #000000"></div>
 
         <label class="reminder__label">Duration between reminders?</label>
         <fieldset class="reminder__radio-group">
@@ -85,15 +82,20 @@
             Start Another Reminder
           </button>
         </div>
-        <div>
-         <!-- ✅ Correct -->
-        <div class="countdown" id="countdown" style="margin-top: 10px; font-size: 18px; color: #333;"></div>
 
-        </div>
+        <!-- Fixed countdown display -->
+        <div
+          class="countdown"
+          id="countdownDisplay"
+          style="
+            margin-top: 15px;
+            font-size: 18px;
+            color: #333;
+            text-align: center;
+            font-weight: bold;
+          "
+        ></div>
       </div>
-      <div>
-      
-      </div>
-
+    </div>
   </body>
 </html>
