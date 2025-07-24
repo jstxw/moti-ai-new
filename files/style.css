@@ -353,7 +353,26 @@ body {
   background: #94a3b8;
 }
 
-#displayReminder,
+#displayReminder {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  margin-bottom: 10px;
+  padding: 6px 18px;
+  background: #e0e7ff;
+  color: #3730a3;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: 1px solid #c7d2fe;
+  transition: background 0.2s, color 0.2s;
+  word-break: break-word;
+  box-shadow: none;
+  min-height: 36px;
+  width: fit-content;
+  max-width: 100%;
+}
+
 #displayReminder2 {
   margin: 0;
   padding: 0;
@@ -372,4 +391,107 @@ body {
   background-size: contain;
   background-repeat: no-repeat;
   transition: transform 0.1s ease;
+}
+
+.task-dropdown-container {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  margin-top: 8px;
+  margin-bottom: 20px;
+  padding: 8px 0 4px 0;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.08);
+  min-width: 220px;
+  max-width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.dropdown-header {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #374151;
+  padding: 4px 16px 6px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 4px;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  color: #374151;
+  border-radius: 6px;
+  margin: 2px 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.dropdown-item.selected {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.dropdown-item:hover {
+  background: #f1f5f9;
+}
+
+.task-text {
+  flex: 1;
+  font-size: 0.95rem;
+  color: inherit;
+  word-break: break-word;
+}
+
+.delete-task-btn {
+  background: #f87171;
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  margin-left: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  line-height: 1;
+}
+
+.delete-task-btn:hover {
+  background: #dc2626;
+}
+
+#pauseMusicBtn {
+  position:absolute;
+  right: 20px;
+  top: 100000px;
+  z-index: 1000;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 20px;
+  width: 100px;
+  height: 50px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#pauseMusicBtn:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #5f3fa2 100%);
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.35);
 }

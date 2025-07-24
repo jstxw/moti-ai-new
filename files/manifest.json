@@ -1,15 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Reminder Extension",
+
   "version": "1.0",
   "description": "yay",
   "action": {
     "default_popup": "popup.html"
     
-  },
-   
-   "web_accessible_resources": [
-    {
-      "resources": ["bot.html"],
-      "matches": ["<all_urls>"]}]
+  }
+  
 }
+

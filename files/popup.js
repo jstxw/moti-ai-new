@@ -4,36 +4,65 @@ if (typeof chrome === "undefined" || !chrome.storage || !chrome.storage.local) {
     storage: {
       local: {
         set: (obj, cb) => {
-          const existing = JSON.parse(localStorage.getItem("reminder") || "{}")
-          localStorage.setItem("reminder", JSON.stringify({ ...existing, ...obj }));
+          const existing = JSON.parse(localStorage.getItem("reminder") || "{}");
+          localStorage.setItem(
+            "reminder",
+            JSON.stringify({ ...existing, ...obj })
+          );
           if (cb) cb();
         },
         get: (keys, cb) => {
           const data = JSON.parse(localStorage.getItem("reminder") || "{}");
           if (Array.isArray(keys)) {
             const result = {};
-            keys.forEach(k => { result[k] = data[k]; });
+            keys.forEach((k) => {
+              result[k] = data[k];
+            });
             cb(result);
           } else if (typeof keys === "object") {
             const result = {};
-            Object.keys(keys).forEach(k => { result[k] = data[k]; });
+            Object.keys(keys).forEach((k) => {
+              result[k] = data[k];
+            });
             cb(result);
           } else {
             cb(data);
           }
-        }
-      }
-    }
+        },
+      },
+    },
   };
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Play audio on popup open
+  const audio = document.getElementById('popupAudio');
+  const pauseMusicBtn = document.getElementById('pauseMusicBtn');
+  if (audio) {
+    audio.play().catch(e => {
+      // Autoplay may be blocked by browser
+      console.log('Autoplay blocked:', e);
+    });
+    if (pauseMusicBtn) {
+      pauseMusicBtn.addEventListener('click', () => {
+        if (audio.paused) {
+          audio.play();
+          pauseMusicBtn.textContent = 'Pause Music';
+        } else {
+          audio.pause();
+          pauseMusicBtn.textContent = 'Play Music';
+        }
+      });
+    }
+  }
   const startBtn = document.querySelector(".reminder__start-button");
   const countdown = document.getElementById("countdownDisplay");
   const pauseBtn = document.getElementById("pauseTimerBtn");
   const reminderTaskDisplay = document.getElementById("reminderTaskDisplay");
-  const anotherTimerBtn = document.querySelector('.reminder__start-button--secondary');
-  const timersContainer = document.getElementById('timersContainer');
+  const anotherTimerBtn = document.querySelector(
+    ".reminder__start-button--secondary"
+  );
+  const timersContainer = document.getElementById("timersContainer");
   const removeMainTimerBtn = document.getElementById("removeMainTimerBtn");
 
   let timer = null; // Track the timer interval globally
@@ -90,37 +119,56 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Restore countdown on load if active
-  chrome.storage.local.get(["reminderStart", "reminderDuration", "reminderPaused", "reminderPausedTimeLeft", "reminderTask"], (data) => {
-    const { reminderStart, reminderDuration, reminderPaused, reminderPausedTimeLeft, reminderTask } = data;
+  chrome.storage.local.get(
+    [
+      "reminderStart",
+      "reminderDuration",
+      "reminderPaused",
+      "reminderPausedTimeLeft",
+      "reminderTask",
+    ],
+    (data) => {
+      const {
+        reminderStart,
+        reminderDuration,
+        reminderPaused,
+        reminderPausedTimeLeft,
+        reminderTask,
+      } = data;
 
-    if (!reminderStart || !reminderDuration) return;
+      if (!reminderStart || !reminderDuration) return;
 
-    let timeLeft;
-    if (reminderPaused && reminderPausedTimeLeft) {
-      paused = true;
-      pausedTimeLeft = reminderPausedTimeLeft;
-      timeLeft = reminderPausedTimeLeft;
-      pauseBtn.textContent = "Resume Timer";
-      updateCountdownDisplay(timeLeft);
-      reminderTaskDisplay.textContent = reminderTask ? `Task: ${reminderTask}` : "";
-    } else {
-      const elapsed = Math.floor((Date.now() - reminderStart) / 1000);
-      const totalSeconds = reminderDuration * 60;
-      timeLeft = totalSeconds - elapsed;
-      if (timeLeft > 0) {
-        if (timer) clearInterval(timer);
-        paused = false;
-        pausedTimeLeft = null;
-        pauseBtn.textContent = "Pause Timer";
-        startCountdown(reminderStart, reminderDuration);
-        reminderTaskDisplay.textContent = reminderTask ? `Task: ${reminderTask}` : "";
-        showMainTimerControls();
+      let timeLeft;
+      if (reminderPaused && reminderPausedTimeLeft) {
+        paused = true;
+        pausedTimeLeft = reminderPausedTimeLeft;
+        timeLeft = reminderPausedTimeLeft;
+        pauseBtn.textContent = "Resume Timer";
+        updateCountdownDisplay(timeLeft);
+        reminderTaskDisplay.textContent = reminderTask
+          ? `Task: ${reminderTask}`
+          : "";
       } else {
-        countdown.textContent = "Time is up!";
-        reminderTaskDisplay.textContent = "";
+        const elapsed = Math.floor((Date.now() - reminderStart) / 1000);
+        const totalSeconds = reminderDuration * 60;
+        timeLeft = totalSeconds - elapsed;
+        if (timeLeft > 0) {
+          if (timer) clearInterval(timer);
+          paused = false;
+          pausedTimeLeft = null;
+          pauseBtn.textContent = "Pause Timer";
+          startCountdown(reminderStart, reminderDuration);
+          reminderTaskDisplay.textContent = reminderTask
+            ? `Task: ${reminderTask}`
+            : "";
+          showMainTimerControls();
+        } else {
+          countdown.textContent = "Time is up!";
+          reminderTaskDisplay.textContent = "";
+        }
       }
     }
-  });
+  );
 
   // Countdown timer function
   function startCountdown(startTime, duration, resumeFromPaused) {
@@ -150,7 +198,10 @@ document.addEventListener("DOMContentLoaded", () => {
           timer = null;
           countdown.textContent = "Time is up!";
           alert("Time to do your task!");
-          chrome.storage.local.set({ reminderPaused: false, reminderPausedTimeLeft: null });
+          chrome.storage.local.set({
+            reminderPaused: false,
+            reminderPausedTimeLeft: null,
+          });
         }
       }
     }, 1000);
@@ -187,17 +238,30 @@ document.addEventListener("DOMContentLoaded", () => {
         secondsLeft = parseInt(match[1]) * 60 + parseInt(match[2]);
       }
       pausedTimeLeft = secondsLeft;
-      chrome.storage.local.set({ reminderPaused: true, reminderPausedTimeLeft: secondsLeft });
+      chrome.storage.local.set({
+        reminderPaused: true,
+        reminderPausedTimeLeft: secondsLeft,
+      });
     } else {
       // Resume the timer
       paused = false;
       pauseBtn.textContent = "Pause Timer";
-      chrome.storage.local.get(["reminderStart", "reminderDuration"], (data) => {
-        // Use pausedTimeLeft as the new countdown
-        if (timer) clearInterval(timer);
-        startCountdown(Date.now() - ((data.reminderDuration * 60 - pausedTimeLeft) * 1000), data.reminderDuration, true);
-        chrome.storage.local.set({ reminderPaused: false, reminderPausedTimeLeft: null });
-      });
+      chrome.storage.local.get(
+        ["reminderStart", "reminderDuration"],
+        (data) => {
+          // Use pausedTimeLeft as the new countdown
+          if (timer) clearInterval(timer);
+          startCountdown(
+            Date.now() - (data.reminderDuration * 60 - pausedTimeLeft) * 1000,
+            data.reminderDuration,
+            true
+          );
+          chrome.storage.local.set({
+            reminderPaused: false,
+            reminderPausedTimeLeft: null,
+          });
+        }
+      );
     }
   });
 
@@ -218,15 +282,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Start Another Reminder button logic
-  if (!anotherTimerBtn) {
-    console.error('Start Another Reminder button not found!');
-  } else if (!timersContainer) {
-    console.error('Timers container not found!');
-  } else {
-    anotherTimerBtn.addEventListener('click', () => {
+  if (anotherTimerBtn) {
+    anotherTimerBtn.addEventListener("click", () => {
+      let timersContainer = document.getElementById('timersContainer');
+      if (!timersContainer) {
+        timersContainer = document.createElement('div');
+        timersContainer.id = 'timersContainer';
+        // Insert after the main timer area
+        const mainTimerBox = document.getElementById('mainCountdownBox')?.parentElement;
+        if (mainTimerBox && mainTimerBox.parentNode) {
+          mainTimerBox.parentNode.insertBefore(timersContainer, mainTimerBox.nextSibling);
+        } else {
+          document.body.appendChild(timersContainer);
+        }
+      }
+      // Timer creation logic
       const selectedRadio = document.querySelector('input[name="duration"]:checked');
-      const manualInput = document.getElementById('timeInput').value;
-      const reminderInput = document.getElementById('reminderInput').value.trim();
+      const manualInput = document.getElementById("timeInput").value;
       let duration = null;
       if (selectedRadio) {
         duration = parseInt(selectedRadio.value);
@@ -234,51 +306,48 @@ document.addEventListener("DOMContentLoaded", () => {
         duration = parseInt(manualInput);
       }
       if (!duration || isNaN(duration) || duration <= 0) {
-        alert('Please enter a valid time in minutes.');
+        alert("Please enter a valid time in minutes.");
         return;
       }
-      // Use selected emoji if available
-      let emoji = currentEmoji || '😊';
-      // Create timer element
-      const timerDiv = document.createElement('div');
-      timerDiv.className = 'additional-timer';
-      timerDiv.style.marginTop = '16px';
-      timerDiv.style.padding = '12px 16px';
-      timerDiv.style.background = '#f8fafc';
-      timerDiv.style.border = '1.5px solid #e2e8f0';
-      timerDiv.style.borderRadius = '8px';
-      timerDiv.style.display = 'flex';
-      timerDiv.style.alignItems = 'center';
-      timerDiv.style.gap = '16px';
+      const timerDiv = document.createElement("div");
+      timerDiv.className = "additional-timer";
+      timerDiv.style.marginTop = "16px";
+      timerDiv.style.padding = "12px 16px";
+      timerDiv.style.background = "#f8fafc";
+      timerDiv.style.border = "1.5px solid #e2e8f0";
+      timerDiv.style.borderRadius = "8px";
+      timerDiv.style.display = "flex";
+      timerDiv.style.alignItems = "center";
+      timerDiv.style.gap = "16px";
 
       // Countdown (styled like main timer)
-      const countdownSpan = document.createElement('span');
-      countdownSpan.style.fontFamily = 'monospace';
-      countdownSpan.style.fontSize = '1.1rem';
-      countdownSpan.style.fontWeight = 'bold';
-      countdownSpan.style.color = '#374151';
-      countdownSpan.style.background = '#f8fafc';
-      countdownSpan.style.padding = '8px 16px';
-      countdownSpan.style.borderRadius = '8px';
-      countdownSpan.style.border = '1px solid #e2e8f0';
+      const countdownSpan = document.createElement("span");
+      countdownSpan.style.fontFamily = "monospace";
+      countdownSpan.style.fontSize = "1.1rem";
+      countdownSpan.style.fontWeight = "bold";
+      countdownSpan.style.color = "#374151";
+      countdownSpan.style.background = "#f8fafc";
+      countdownSpan.style.padding = "8px 16px";
+      countdownSpan.style.borderRadius = "8px";
+      countdownSpan.style.border = "1px solid #e2e8f0";
       timerDiv.appendChild(countdownSpan);
 
       // Pause/Resume button
-      const pauseBtn = document.createElement('button');
-      pauseBtn.textContent = 'Pause Timer';
-      pauseBtn.className = 'reminder__button';
-      pauseBtn.style.marginLeft = '12px';
+      const pauseBtn = document.createElement("button");
+      pauseBtn.textContent = "Pause Timer";
+      pauseBtn.className = "reminder__button";
+      pauseBtn.style.marginLeft = "12px";
       timerDiv.appendChild(pauseBtn);
 
       // Remove button
-      const removeBtn = document.createElement('button');
-      removeBtn.textContent = '×';
-      removeBtn.className = 'delete-task-btn';
-      removeBtn.style.marginLeft = '8px';
+      const removeBtn = document.createElement("button");
+      removeBtn.textContent = "×";
+      removeBtn.className = "delete-task-btn";
+      removeBtn.style.marginLeft = "8px";
       timerDiv.appendChild(removeBtn);
 
       timersContainer.appendChild(timerDiv);
-      console.log('Created new additional timer:', duration);
+      console.log("Created new additional timer:", duration);
 
       // Timer logic
       let totalSeconds = duration * 60;
@@ -288,11 +357,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       function updateCountdownDisplay() {
         if (timeLeft <= 0) {
-          countdownSpan.textContent = 'Time is up!';
+          countdownSpan.textContent = "Time is up!";
           return;
         }
-        const mins = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-        const secs = (timeLeft % 60).toString().padStart(2, '0');
+        const mins = Math.floor(timeLeft / 60)
+          .toString()
+          .padStart(2, "0");
+        const secs = (timeLeft % 60).toString().padStart(2, "0");
         countdownSpan.textContent = `Time remaining: ${mins}:${secs}`;
       }
 
@@ -304,24 +375,24 @@ document.addEventListener("DOMContentLoaded", () => {
             updateCountdownDisplay();
             if (timeLeft <= 0) {
               clearInterval(interval);
-              countdownSpan.textContent = 'Time is up!';
-              alert('Time to do your task!');
+              countdownSpan.textContent = "Time is up!";
+              alert("Time to do your task!");
             }
           }
         }, 1000);
       }
 
-      pauseBtn.addEventListener('click', () => {
+      pauseBtn.addEventListener("click", () => {
         if (!paused) {
           paused = true;
-          pauseBtn.textContent = 'Resume';
+          pauseBtn.textContent = "Resume";
         } else {
           paused = false;
-          pauseBtn.textContent = 'Pause';
+          pauseBtn.textContent = "Pause";
         }
       });
 
-      removeBtn.addEventListener('click', () => {
+      removeBtn.addEventListener("click", () => {
         clearInterval(interval);
         timerDiv.remove();
       });
@@ -335,8 +406,6 @@ document.addEventListener("DOMContentLoaded", () => {
 const setReminderLink = document.querySelector('.reminder__nav-link[href="#"]');
 const viewReminderLink = document.querySelectorAll(".reminder__nav-link")[1];
 const botLink = document.getElementById("navBot");
-const soundLink = document.getElementById("navSound");
-const soundSection = document.getElementById("soundSection");
 
 const content = document.querySelector(".reminder__content");
 const setSection = content.querySelectorAll(
@@ -348,22 +417,12 @@ setReminderLink.addEventListener("click", (e) => {
   e.preventDefault();
   setSection.forEach((el) => (el.style.display = ""));
   if (viewSection) viewSection.style.display = "none";
-  if (soundSection) soundSection.style.display = "none";
-  // Show timers
-  document.querySelectorAll('.additional-timer').forEach(el => el.style.display = "flex");
-  const mainTimerBox = document.querySelector('#mainCountdownBox')?.parentElement;
-  if (mainTimerBox) mainTimerBox.style.display = "flex";
 });
 
 viewReminderLink.addEventListener("click", (e) => {
   e.preventDefault();
   setSection.forEach((el) => (el.style.display = "none"));
   if (viewSection) viewSection.style.display = "block";
-  if (soundSection) soundSection.style.display = "none";
-  // Show timers
-  document.querySelectorAll('.additional-timer').forEach(el => el.style.display = "flex");
-  const mainTimerBox = document.querySelector('#mainCountdownBox')?.parentElement;
-  if (mainTimerBox) mainTimerBox.style.display = "flex";
 });
 
 // Navigate to bot.html when Bot tab is clicked
@@ -372,17 +431,27 @@ botLink.addEventListener("click", (e) => {
   window.location.href = "bot.html";
 });
 
-// Show Sound section when Sound tab is clicked
-soundLink.addEventListener("click", (e) => {
-  e.preventDefault();
-  setSection.forEach((el) => (el.style.display = "none"));
-  if (viewSection) viewSection.style.display = "none";
-  if (soundSection) soundSection.style.display = "block";
-  // Hide timers
-  document.querySelectorAll('.additional-timer').forEach(el => el.style.display = "none");
-  const mainTimerBox = document.querySelector('#mainCountdownBox')?.parentElement;
-  if (mainTimerBox) mainTimerBox.style.display = "none";
-});
+// Black & White mode for the whole page (Sound tab)
+const changeColorBtn = document.getElementById('changeColor');
+if (changeColorBtn && chrome.tabs && chrome.scripting) {
+  changeColorBtn.addEventListener('click', async () => {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: () => {
+        let style = document.getElementById('bw-global-style');
+        if (style) {
+          style.remove();
+        } else {
+          style = document.createElement('style');
+          style.id = 'bw-global-style';
+          style.textContent = 'html { filter: grayscale(1) !important; }';
+          document.head.appendChild(style);
+        }
+      }
+    });
+  });
+}
 
 // Task dropdown functionality
 const input = document.querySelector(".reminder__input");
@@ -394,7 +463,7 @@ let selectedTask = null;
 const dropdownContainer = document.createElement("div");
 dropdownContainer.className = "task-dropdown-container";
 dropdownContainer.style.display = "none";
-const inputGroup = document.querySelector('.reminder__input-group');
+const inputGroup = document.querySelector(".reminder__input-group");
 inputGroup.parentNode.insertBefore(dropdownContainer, inputGroup.nextSibling);
 
 button.addEventListener("click", (e) => {
@@ -416,6 +485,9 @@ button.addEventListener("click", (e) => {
   }
 });
 
+// Remove document click event that hides the dropdown
+// Make the dropdown always visible if there are tasks
+
 function updateDropdown() {
   dropdownContainer.innerHTML = "";
 
@@ -423,6 +495,8 @@ function updateDropdown() {
     dropdownContainer.style.display = "none";
     return;
   }
+
+  dropdownContainer.style.display = "block";
 
   // Add header
   const header = document.createElement("div");
@@ -505,17 +579,6 @@ function removeTask(index) {
   }
 }
 
-// Close dropdown when clicking outside
-document.addEventListener("click", (e) => {
-  if (
-    !dropdownContainer.contains(e.target) &&
-    !input.contains(e.target) &&
-    !button.contains(e.target)
-  ) {
-    hideDropdown();
-  }
-});
-
 // Show dropdown when clicking on input (if there are tasks)
 input.addEventListener("click", (e) => {
   e.stopPropagation();
@@ -525,17 +588,17 @@ input.addEventListener("click", (e) => {
 });
 
 // --- Emoji Selector Logic ---
-let currentEmoji = '😊'; // Default emoji
-document.addEventListener('DOMContentLoaded', () => {
-  const emojiBtns = document.querySelectorAll('.emoji-btn');
+let currentEmoji = "😊"; // Default emoji
+document.addEventListener("DOMContentLoaded", () => {
+  const emojiBtns = document.querySelectorAll(".emoji-btn");
   if (emojiBtns.length > 0) {
-    emojiBtns[0].classList.add('selected');
+    emojiBtns[0].classList.add("selected");
     currentEmoji = emojiBtns[0].textContent;
   }
   emojiBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      emojiBtns.forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
+    btn.addEventListener("click", () => {
+      emojiBtns.forEach((b) => b.classList.remove("selected"));
+      btn.classList.add("selected");
       currentEmoji = btn.textContent;
     });
   });
