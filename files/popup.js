@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const startTme = Date.now();
+    const startTime = Date.now();
 
     chrome.storage.local.set(
       {
