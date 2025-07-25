@@ -36,21 +36,21 @@ if (typeof chrome === "undefined" || !chrome.storage || !chrome.storage.local) {
 
 document.addEventListener("DOMContentLoaded", () => {
   // Play audio on popup open
-  const audio = document.getElementById('popupAudio');
-  const pauseMusicBtn = document.getElementById('pauseMusicBtn');
+  const audio = document.getElementById("popupAudio");
+  const pauseMusicBtn = document.getElementById("pauseMusicBtn");
   if (audio) {
-    audio.play().catch(e => {
+    audio.play().catch((e) => {
       // Autoplay may be blocked by browser
-      console.log('Autoplay blocked:', e);
+      console.log("Autoplay blocked:", e);
     });
     if (pauseMusicBtn) {
-      pauseMusicBtn.addEventListener('click', () => {
+      pauseMusicBtn.addEventListener("click", () => {
         if (audio.paused) {
           audio.play();
-          pauseMusicBtn.textContent = 'Pause Music';
+          pauseMusicBtn.textContent = "Pause Music";
         } else {
           audio.pause();
-          pauseMusicBtn.textContent = 'Play Music';
+          pauseMusicBtn.textContent = "Play Music";
         }
       });
     }
@@ -73,25 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Start timer when user clicks the button
   startBtn.addEventListener("click", () => {
     console.log("Start button clicked");
-
-    const selectedRadio = document.querySelector(
-      'input[name="duration"]:checked'
-    );
-    const manualInput = document.getElementById("timeInput").value;
-    const reminderInput = document.getElementById("reminderInput").value.trim();
-
-    let duration = null;
-    if (selectedRadio) {
-      duration = parseInt(selectedRadio.value);
-    } else if (manualInput && !isNaN(parseInt(manualInput))) {
-      duration = parseInt(manualInput);
-    }
-
-    if (!duration || isNaN(duration) || duration <= 0) {
-      countdown.textContent = "Please select or enter a valid time in minutes.";
-      alert("Please enter a valid time in minutes.");
-      return;
-    }
 
     // Save the current task
     currentTask = reminderInput;
@@ -284,20 +265,26 @@ document.addEventListener("DOMContentLoaded", () => {
   // Start Another Reminder button logic
   if (anotherTimerBtn) {
     anotherTimerBtn.addEventListener("click", () => {
-      let timersContainer = document.getElementById('timersContainer');
+      let timersContainer = document.getElementById("timersContainer");
       if (!timersContainer) {
-        timersContainer = document.createElement('div');
-        timersContainer.id = 'timersContainer';
+        timersContainer = document.createElement("div");
+        timersContainer.id = "timersContainer";
         // Insert after the main timer area
-        const mainTimerBox = document.getElementById('mainCountdownBox')?.parentElement;
+        const mainTimerBox =
+          document.getElementById("mainCountdownBox")?.parentElement;
         if (mainTimerBox && mainTimerBox.parentNode) {
-          mainTimerBox.parentNode.insertBefore(timersContainer, mainTimerBox.nextSibling);
+          mainTimerBox.parentNode.insertBefore(
+            timersContainer,
+            mainTimerBox.nextSibling
+          );
         } else {
           document.body.appendChild(timersContainer);
         }
       }
       // Timer creation logic
-      const selectedRadio = document.querySelector('input[name="duration"]:checked');
+      const selectedRadio = document.querySelector(
+        'input[name="duration"]:checked'
+      );
       const manualInput = document.getElementById("timeInput").value;
       let duration = null;
       if (selectedRadio) {
@@ -432,23 +419,26 @@ botLink.addEventListener("click", (e) => {
 });
 
 // Black & White mode for the whole page (Sound tab)
-const changeColorBtn = document.getElementById('changeColor');
+const changeColorBtn = document.getElementById("changeColor");
 if (changeColorBtn && chrome.tabs && chrome.scripting) {
-  changeColorBtn.addEventListener('click', async () => {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  changeColorBtn.addEventListener("click", async () => {
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
       func: () => {
-        let style = document.getElementById('bw-global-style');
+        let style = document.getElementById("bw-global-style");
         if (style) {
           style.remove();
         } else {
-          style = document.createElement('style');
-          style.id = 'bw-global-style';
-          style.textContent = 'html { filter: grayscale(1) !important; }';
+          style = document.createElement("style");
+          style.id = "bw-global-style";
+          style.textContent = "html { filter: grayscale(1) !important; }";
           document.head.appendChild(style);
         }
-      }
+      },
     });
   });
 }

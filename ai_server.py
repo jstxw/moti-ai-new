@@ -5,22 +5,38 @@ import os
 import openai
 from openai import OpenAI
 
+<<<<<<< HEAD
 
+=======
+# Load environment variables from .env file
+>>>>>>> af905eb (Initial commit)
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 client = OpenAI()
 
 
+<<<<<<< HEAD
 app = Flask(__name__)
 CORS(app) 
+=======
+# Set up Flask app
+app = Flask(__name__)
+CORS(app)  # Allow requests from different origins like Chrome Extensions
+>>>>>>> af905eb (Initial commit)
 
 @app.route('/motivate', methods=['POST'])
 def motivate():
     data = request.get_json()
+<<<<<<< HEAD
     task = data.get("task", "I am not sure what to focus on")
 
     prompt = task
+=======
+    task = data.get("task", "your task")
+
+    prompt = f"Give me a short, encouraging motivational message to help someone focus on: {task}."
+>>>>>>> af905eb (Initial commit)
 
     try:
         response = client.responses.create(

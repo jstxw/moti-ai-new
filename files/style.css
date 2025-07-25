@@ -405,6 +405,7 @@ body {
   max-width: 100%;
   max-height: 220px;
   overflow-y: auto;
+  z-index: 20;
 }
 
 .dropdown-header {
@@ -468,10 +469,10 @@ body {
 }
 
 #pauseMusicBtn {
-  position:absolute;
+  position: absolute;
   right: 20px;
-  top: 100000px;
-  z-index: 1000;
+  top: 38px;
+  z-index: 10;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
   border: none;
