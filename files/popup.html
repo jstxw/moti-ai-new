@@ -1,1 +1,195 @@
- 
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="style.css" />
+    <script src="popup.js" defer></script>
+  </head>
+
+  <body>
+    <<<<<<< HEAD
+    <button
+      id="pauseMusicBtn"
+      class="reminder__button"
+      style="position: absolute; top: 18px; right: 24px; z-index: 10"
+    >
+      Pause Music
+    </button>
+    <div class="reminder">
+      <audio
+        id="popupAudio"
+        src="magical-eden-378679.mp3"
+        preload="auto"
+      ></audio>
+      =======
+      <div class="reminder">
+        >>>>>>> 87f593da069f3f8423aa2d40f63701d86336ff72
+        <div class="reminder__header">
+          <h1 class="reminder__title">
+            Moti<span class="reminder__title-accent">AI</span>
+          </h1>
+        </div>
+
+        <nav class="reminder__nav">
+          <ul class="reminder__nav-list">
+            <li class="reminder__nav-item">
+              <a class="reminder__nav-link" href="#" id="navSet"
+                >Set Reminder</a
+              >
+            </li>
+            <<<<<<< HEAD
+            <li class="reminder__nav-item"></li>
+            <li>
+              <a class="reminder__nav-link" href="#" id="navBot">Chatbot</a>
+              =======
+            </li>
+
+            <li class="reminder__nav-item"></li>
+            <li>
+              <a class="reminder__nav-link" href="#" id="navBot">Chatbot</a>
+              >>>>>>> 87f593da069f3f8423aa2d40f63701d86336ff72
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Set Reminder Section -->
+        <div class="reminder__content" id="setSection">
+          <label class="reminder__label" for="reminderInput"
+            >What do you want to be reminded of?</label
+          >
+          <div class="reminder__input-group">
+            <input
+              type="text"
+              id="reminderInput"
+              class="reminder__input"
+              placeholder="Enter task..."
+            />
+            <button class="reminder__button">&#10003;</button>
+            <<<<<<< HEAD
+            <div
+              id="displayReminder"
+              style="color: #000000; margin-left: 10px"
+            ></div>
+          </div>
+          =======
+        </div>
+        <div id="displayReminder" style="color: #000000"></div>
+
+        >>>>>>> 87f593da069f3f8423aa2d40f63701d86336ff72
+
+        <label class="reminder__label">Duration between reminders?</label>
+        <fieldset class="reminder__radio-group">
+          <label class="reminder__radio-item"
+            ><input type="radio" name="duration" value="1" /> 1 Minute</label
+          >
+          <label class="reminder__radio-item"
+            ><input type="radio" name="duration" value="5" /> 5 Minutes</label
+          >
+          <label class="reminder__radio-item"
+            ><input type="radio" name="duration" value="10" /> 10 Minutes</label
+          >
+          <input
+            type="number"
+            id="timeInput"
+            class="reminder__input--number"
+            placeholder="Or enter time... (in minutes)"
+          />
+        </fieldset>
+
+        <<<<<<< HEAD =======
+        <label class="reminder__label" for="motivationInput"
+          >How motivated are you?</label
+        >
+        <div class="reminder__input-group">
+          <input
+            type="text"
+            id="motivationInput"
+            class="reminder__input2"
+            placeholder="Enter motivation level..."
+          />
+          <button class="reminder__button2">&#10003;</button>
+        </div>
+        <div id="displayReminder2"></div>
+
+        >>>>>>> 87f593da069f3f8423aa2d40f63701d86336ff72
+        <div class="reminder__button-row">
+          <button class="reminder__start-button">
+            Start Timer For Reminder
+          </button>
+          <button class="reminder__start-button--secondary">
+            Start Another Reminder
+          </button>
+        </div>
+        <<<<<<< HEAD
+
+        <!-- Fixed countdown display -->
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+          "
+        >
+          <span
+            id="mainCountdownBox"
+            style="
+              font-family: monospace;
+              font-size: 1.1rem;
+              font-weight: bold;
+              color: #374151;
+              background: #f8fafc;
+              padding: 8px 16px;
+              border-radius: 8px;
+              border: 1px solid #e2e8f0;
+            "
+          >
+            <span id="countdownDisplay">Time remaining: 00:00</span>
+          </span>
+          <button
+            id="pauseTimerBtn"
+            class="reminder__button"
+            style="margin-left: 12px"
+          >
+            Pause Timer
+          </button>
+          <button
+            id="removeMainTimerBtn"
+            class="delete-task-btn"
+            style="margin-left: 8px"
+          >
+            X
+          </button>
+        </div>
+        <div
+          id="reminderTaskDisplay"
+          style="
+            margin-top: 8px;
+            font-size: 1rem;
+            color: #374151;
+            text-align: center;
+          "
+        ></div>
+        <audio id="musicPlayer" autoplay>
+          <source src="music.mp3" type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+      </div>
+      =======
+      <div>
+        <!-- ✅ Correct -->
+        <div
+          class="countdown"
+          id="countdown"
+          style="margin-top: 10px; font-size: 18px; color: #333"
+        ></div>
+      </div>
+    </div>
+    <div></div>
+
+    >>>>>>> 87f593da069f3f8423aa2d40f63701d86336ff72
+  </body>
+</html>

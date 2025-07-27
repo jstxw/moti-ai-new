@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 document.addEventListener("DOMContentLoaded", () => {
   const chatLog = document.getElementById("chatLog");
   const userInput = document.getElementById("userInput");
@@ -219,3 +220,41 @@ Just ask me anything related to productivity, motivation, or your goals!`;
     });
   }
 });
+=======
+document.getElementById("sendBtn").addEventListener("click", async () => {
+  const input = document.getElementById("userInput");
+  const message = input.value.trim();
+  if (!message) return;
+
+  appendMessage("You", message);
+  input.value = "";
+
+  try {
+    const response = await fetch("http://127.0.0.1:5000/motivate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message }),
+    });
+
+    const data = await response.json();
+    appendMessage("Bot", data.message);
+  } catch (err) {
+    appendMessage("Bot", "Could not reach server.");
+    console.error(err);
+  }
+});
+
+function appendMessage(sender, text) {
+  const chatLog = document.getElementById("chatLog");
+  const entry = document.createElement("div");
+  entry.textContent = `${sender}: ${text}`;
+  chatLog.appendChild(entry);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+document.getElementById("navSet").addEventListener("click", () => {
+  window.location.href = "popup.html";
+});
+>>>>>>> 87f593da069f3f8423aa2d40f63701d86336ff72
