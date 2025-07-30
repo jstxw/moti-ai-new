@@ -36,9 +36,10 @@ For a project like Moti-AI — which aims to give friendly, helpful, and emotion
 
 Note: Flask was run on a .venv to avoid repetition when importing python libraries.
 
-1. .\.venv\Scripts\Activate.ps1
-2. pip install flask openai@latest python-dotenv flask-cors
-3. python3 ai_server.py
+1. python -m venv venv
+2. .\.venv\Scripts\Activate.ps1
+3. pip install flask openai@latest python-dotenv flask-cors
+4. python3 ai_server.py
 
 Challenges: First time using flask, bot always returning undefined. Mentors helped me troubleshoot the problem, and taught me how to debug. for example on of the problems was OPENAI updates its implementation, needing me to go into quickstart and changing the old code. Another challenge was deciding the functionality of the app, so that it is both useful but also focused and realistic .
 
